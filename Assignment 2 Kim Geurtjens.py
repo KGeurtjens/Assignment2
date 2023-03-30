@@ -31,17 +31,14 @@ climate_change, climate_tr = \
 climate_change = climate_change.drop("Unnamed: 66", axis=1)
 climate_tr = climate_tr.drop("Unnamed: 66")
 
-print(climate_change)
-print(climate_tr)
-
-# Create dataframe with only relevant information for six largest countries
-# including world (arable land and forest area)
+# Create dataframes with only relevant information for six largest countries
+# with or without world data (arable land and forest area)
 arable_forest_all = climate_change.loc[(climate_change["Indicator Name"] 
                                             == "Arable land (% of land area)")
                                            | (climate_change["Indicator Name"]
                                             == "Forest area (% of land area)")]
 
-arable_forest_six = arable_forest_all[(arable_forest_all["Country Name"] ==
+arable_forest_sixw = arable_forest_all[(arable_forest_all["Country Name"] ==
                                "Russian Federation") |
                               (arable_forest_all["Country Name"] == "Canada") |
                               (arable_forest_all["Country Name"] == "China") |
@@ -51,40 +48,85 @@ arable_forest_six = arable_forest_all[(arable_forest_all["Country Name"] ==
                               (arable_forest_all["Country Name"] ==
                                "Australia") |
                               (arable_forest_all["Country Name"] == "World")]
-print(arable_forest_six)
+
+arable_forest_six = arable_forest_all[(arable_forest_all["Country Name"] ==
+                               "Russian Federation") |
+                              (arable_forest_all["Country Name"] == "Canada") |
+                              (arable_forest_all["Country Name"] == "China") |
+                              (arable_forest_all["Country Name"] ==
+                               "United States") |
+                              (arable_forest_all["Country Name"] == "Brazil") |
+                              (arable_forest_all["Country Name"] ==
+                               "Australia")]
 
 # Create transposed dataframe with only relevant information for six largest
-# countries
-arable_forest_six_tr = pd.DataFrame.transpose(arable_forest_six)
-arable_forest_six_tr.columns = arable_forest_six_tr.iloc[0]
-arable_forest_six_tr = arable_forest_six_tr.iloc[2:]
-print(arable_forest_six_tr)
-
-# Statistical properties of arable land and forest area over six countries
-arable_six = arable_forest_six.loc[climate_change["Indicator Name"]
-                           == "Arable land (% of land area)"]
-# Columns without NaN values
-arable_six1 = arable_six[["1970", "1980", "1990", "2000", "2010", "2020"]]
-print(arable_six1.describe())
-
-forest_six = arable_forest_six.loc[climate_change["Indicator Name"]
-                           == "Forest area (% of land area)"]
-# Columns without NaN values
-forest_six1 = forest_six[["1990", "2000", "2010", "2020"]]
-print(forest_six1.describe())
+# countries and world
+#arable_forest_sixw_tr = pd.DataFrame.transpose(arable_forest_sixw)
+#arable_forest_sixw_tr.columns = arable_forest_sixw_tr.iloc[0]
+#arable_forest_sixw_tr = arable_forest_sixw_tr.iloc[2:]
+#DELETE IN THE END IF NOT NEEDED
 
 # Statistical properties of arable land and forest area over all countries
 arable_all = arable_forest_all.loc[climate_change["Indicator Name"]
                            == "Arable land (% of land area)"]
 # Columns without NaN values
-arable_all1 = arable_all[["1970", "1980", "1990", "2000", "2010", "2020"]]
+arable_all1 = arable_all[["Country Name", "1970", "1980", "1990", "2000",
+                          "2010", "2020"]]
 print(arable_all1.describe())
 
 forest_all = arable_forest_all.loc[climate_change["Indicator Name"]
                            == "Forest area (% of land area)"]
 # Columns without NaN values
-forest_all1 = forest_all[["1990", "2000", "2010", "2020"]]
+forest_all1 = forest_all[["Country Name", "1990", "2000", "2010", "2020"]]
 print(forest_all1.describe())
+
+# Statistical properties of arable land and forest area over six countries
+arable_six = arable_forest_six.loc[climate_change["Indicator Name"]
+                           == "Arable land (% of land area)"]
+# Columns without NaN values
+arable_six1 = arable_six[["Country Name", "1970", "1980", "1990", "2000",
+                          "2010", "2020"]]
+print(arable_six1.describe())
+
+forest_six = arable_forest_six.loc[climate_change["Indicator Name"]
+                           == "Forest area (% of land area)"]
+# Columns without NaN values
+forest_six1 = forest_six[["Country Name", "1990", "2000", "2010", "2020"]]
+print(forest_six1.describe())
+
+
+#years = np.array([1990, 2000, 2010, 2020])
+#australia = ([17.4274, 17.1582, 16.8629, 17.4213])
+#brazil = ([70.458, 65.9344, 61.2075, 59.4175])
+#canada = ([38.8455, 38.793, 38.7395, 38.6955])
+#china = ([16.6733, 18.7805, 21.2856, 23.3406])
+#russia = (["NaN", 49.4018, 49.7736, 49.7843])
+#us = ([33.0223, 33.1302, 33.7494, 33.8669])
+#DELETE IN THE END IF NOT NEEDED
+
+names = ["Australia", "Brazil", "Canada", "China", "Russia", "US"]
+year1990 = [17.4274, 70.4580, 38.8455,
+             16.6733, 0, 33.0223]
+year2000 = [17.1582, 65.9344, 38.7930,
+             18.7805, 49.4018, 33.1302]
+year2010 = [16.8629, 61.2075, 38.7395,
+             21.2856, 49.7736, 33.7494]
+year2020 = [17.4213, 59.4175, 38.6955,
+             23.3406, 49.7843, 33.8669]
+
+X = np.arange(6)
+plt.bar(X - 0.3, year1990, 0.2, label="1990")
+plt.bar(X - 0.1, year2000, 0.2, label="2000")
+plt.bar(X + 0.1, year2010, 0.2, label="2010")
+plt.bar(X + 0.3, year2020, 0.2, label="2020")
+plt.xticks(X, names)
+plt.ylabel("Forest area (% of land area)")
+plt.title("Forest area over the years for six largest countries")
+plt.legend()
+plt.savefig("bar_forest.png")
+
+plt.show()
+
 
 # Statistical properties of arable land and forest area over all years for six
 # countries
@@ -100,7 +142,7 @@ forest_tr = forest_tr.iloc[4:]
 print(forest_tr.mean())
 print(forest_tr.std())
 
-# Skewness of six different countries and world over all years
+# Skewness of six different countries over all years
 arable_tr = arable_tr.astype(float)
 arable_tr_clean = arable_tr.dropna()
 print("skewness", stats.skew(arable_tr_clean))
@@ -129,10 +171,16 @@ plt.savefig("heatmap_arable.png", dpi=300, bbox_inches="tight")
 #heatmap_forest.set_title("Correlation heatmap forest area")
 #plt.savefig("heatmap_forest.png", dpi=300, bbox_inches="tight")
 
-# Visualization of data over time
-arable_tr["Year"] = arable_tr.index
-arable_tr = arable_tr.astype(float)
-arable_tr.plot("Year", ["Australia", "Brazil", "Canada", "China",
+# Visualization of data over time for six biggest countries and the world
+arable_sixw = arable_forest_sixw.loc[climate_change["Indicator Name"]
+                           == "Arable land (% of land area)"]
+arablew_tr = pd.DataFrame.transpose(arable_sixw)
+arablew_tr.columns = arablew_tr.iloc[0]
+arablew_tr = arablew_tr.iloc[4:]
+
+arablew_tr["Year"] = arablew_tr.index
+arablew_tr = arablew_tr.astype(float)
+arablew_tr.plot("Year", ["Australia", "Brazil", "Canada", "China",
                   "Russian Federation", "United States", "World"])
 plt.xlim(1961, 2020)
 plt.ylabel("Arable land (% of land area)")
@@ -141,13 +189,38 @@ plt.title("Arable land of biggest countries of the world over time")
 plt.savefig("arable_land.png")
 plt.show()
 
-forest_tr["Year"] = forest_tr.index
-forest_tr = forest_tr.astype(float)
-forest_tr.plot("Year", ["Australia", "Brazil", "Canada", "China",
+forest_sixw = arable_forest_sixw.loc[climate_change["Indicator Name"]
+                           == "Forest area (% of land area)"]
+forestw_tr = pd.DataFrame.transpose(forest_sixw)
+forestw_tr.columns = forestw_tr.iloc[0]
+forestw_tr = forestw_tr.iloc[4:]
+
+forestw_tr["Year"] = forestw_tr.index
+forestw_tr = forestw_tr.astype(float)
+forestw_tr.plot("Year", ["Australia", "Brazil", "Canada", "China",
                   "Russian Federation", "United States", "World"])
 plt.xlim(1990, 2020)
 plt.ylabel("Forest area (% of land area)")
 plt.legend(loc="upper left", fontsize="9")
 plt.title("Forest area of biggest countries of the world over time")
 plt.savefig("forest_area.png")
+plt.show()
+
+# Visualization of data over time as the average over six biggest countries
+#av_six = 
+av_six = arable_forest_six.groupby("Indicator Name").mean()
+print(av_six)
+
+av_tr_six = pd.DataFrame.transpose(av_six)
+print(av_tr_six)
+
+av_tr_six["Year"] = av_tr_six.index
+av_tr_six = av_tr_six.astype(float)
+av_tr_six.plot("Year", ["Arable land (% of land area)",
+                         "Forest area (% of land area)"])
+plt.xlim(1960, 2020)
+plt.ylabel("% of land area")
+plt.legend(loc="center left", fontsize="9")
+plt.title("Average arable land and forest area of biggest countries over time")
+plt.savefig("arable_forest_sum.png")
 plt.show()

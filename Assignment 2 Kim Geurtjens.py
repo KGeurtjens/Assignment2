@@ -127,7 +127,6 @@ plt.savefig("bar_forest.png")
 
 plt.show()
 
-
 # Statistical properties of arable land and forest area over all years for six
 # countries
 arable_tr = pd.DataFrame.transpose(arable_six)
@@ -160,16 +159,45 @@ print(arable_corr)
 forest_corr = forest_tr.corr()
 print(forest_corr)
 
-heatmap_arable = sns.heatmap(arable_tr.corr(), vmin=-1, vmax=1, annot=True,
-                             cmap="PiYG")
-heatmap_arable.set_title("Correlation heatmap arable land")
-plt.savefig("heatmap_arable.png", dpi=300, bbox_inches="tight")
+# First two heatmaps are commented because otherwise they will occur in the
+# same plot
+#heatmap_arable = sns.heatmap(arable_tr.corr(), vmin=-1, vmax=1, annot=True,
+#                             cmap="PiYG")
+#heatmap_arable.set_title("Correlation heatmap arable land")
+#plt.savefig("heatmap_arable.png", dpi=300, bbox_inches="tight")
 
-# Last heatmap is commented because otherwise they will occur in one plot
 #heatmap_forest = sns.heatmap(forest_tr.corr(), vmin=-1, vmax=1, annot=True,
 #                             cmap="PiYG")
 #heatmap_forest.set_title("Correlation heatmap forest area")
 #plt.savefig("heatmap_forest.png", dpi=300, bbox_inches="tight")
+
+
+climate_bra = climate_change.loc[climate_change["Country Name"] == "Brazil"]
+climate_tr_bra = pd.DataFrame.transpose(climate_bra)
+climate_tr_bra.columns = climate_tr_bra.iloc[0]
+climate_tr_bra = climate_tr_bra.iloc[2:]
+climate_tr_bra.columns = climate_tr_bra.iloc[0]
+climate_tr_bra = climate_tr_bra.iloc[2:]
+climate_tr_bra = climate_tr_bra.astype(float)
+climate_tr_bra = climate_tr_bra.rename(columns={
+    "Urban population (% of total population)":"Urban pop (% of total)",
+    "Population, total":"Total pop",
+    "Total greenhouse gas emissions (kt of CO2 equivalent)":
+    "Greenhouse emissions",
+    "Agriculture, forestry, and fishing, value added (% of GDP)":
+    "Agriculture, forestry, fishing",
+    "Energy use (kg of oil equivalent per capita)":"Energy use"})
+climate_tr_bra = climate_tr_bra[["Urban pop (% of total)",
+                "Total pop", "Arable land (% of land area)",
+                "Forest area (% of land area)",
+                "Greenhouse emissions",
+                "Agriculture, forestry, fishing",
+                "Energy use"]]
+
+heatmap_climate_bra = sns.heatmap(climate_tr_bra.corr(), vmin=-1, vmax=1,
+                                    annot=True, cmap="PiYG")
+heatmap_climate_bra.set_title("Correlation heatmap Brazil")
+plt.savefig("heatmap_brazil.png", dpi=300, bbox_inches="tight")
 
 # Visualization of data over time for six biggest countries and the world
 arable_sixw = arable_forest_sixw.loc[climate_change["Indicator Name"]
@@ -207,7 +235,6 @@ plt.savefig("forest_area.png")
 plt.show()
 
 # Visualization of data over time as the average over six biggest countries
-#av_six = 
 av_six = arable_forest_six.groupby("Indicator Name").mean()
 print(av_six)
 
